@@ -2,18 +2,26 @@ import 'babel-polyfill';
 import 'babel-plugin-transform-regenerator';
 import ReactDOM from 'react-dom';
 import React from 'react';
-import { Provider } from 'react-redux';
+import { AppContainer } from 'react-hot-loader';
+import App from './containers/app';
 import configureStore  from './store';
-import Hello from './components/hello';
 
-const mount = document.getElementById('root'),
-    store = configureStore();
+const store = configureStore();
 
-const toRender = (
-    <Provider store={store}>
-        <Hello />
-    </Provider>
-);
-ReactDOM.render(toRender, mount);
+const render = (Component) => {
+  ReactDOM.render(
+    <AppContainer>
+      <Component store={store} />
+    </AppContainer>,
+    document.getElementById('root')
+  );
+};
 
-if (module.hot) module.hot.accept();
+render(App)
+
+if (module.hot) {
+  module.hot.accept('./containers/app', () => {
+    const newApp = require('./containers/app').default;
+    render(newApp);
+  });
+}

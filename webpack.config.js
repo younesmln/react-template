@@ -1,26 +1,45 @@
 var webpack = require('webpack');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-    devtool: 'source-map',
-    entry: [
-        'webpack-dev-server/client?http://localhost:3000',
-        'webpack/hot/only-dev-server',
-        './src/index.js'
-    ],
-    module: {
-        loaders: [
-            {
-                test: /\.js$/,
-                include: __dirname + '/src',
-                loaders: ['babel']
-            }
+  entry: [
+    'react-hot-loader/patch',
+    'webpack-dev-server/client?http://localhost:3000',
+    'webpack/hot/only-dev-server',
+    './index.js'
+  ],
+  output: {
+    path: __dirname + '/build',
+    filename: 'bundle.js',
+    publicPath: '/'
+  },
+  devServer: {
+    hot: true,
+    contentBase: __dirname + '/build',
+    publicPath: '/'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: ['babel-loader'],
+        exclude: /node_modules/
+      },
+      {
+        test: /\.sass$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+          'sass-loader'
         ]
-    },
-    output: {
-        path: __dirname + '/build',
-        filename: 'bundle.js'
-    },
-    plugins: [
-        new HTMLWebpackPlugin({template: './src/index.html'})
+      }
     ]
+  },
+  devtool: 'inline-source-map',
+  context: __dirname + '/src',
+  plugins: [
+    new HTMLWebpackPlugin({template: './index.html'}),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin()
+  ]
 };
